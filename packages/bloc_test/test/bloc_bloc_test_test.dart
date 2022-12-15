@@ -116,9 +116,9 @@ void main() {
         final completer = Completer<void>();
         await runZonedGuarded(() async {
           unawaited(testBloc<CounterBloc, int>(
-            build: () => CounterBloc(),
-            act: (bloc) => bloc.add(CounterEvent.increment),
-            expect: () => const <int>[2],
+            given: () => CounterBloc(),
+            when: (bloc) => bloc.add(CounterEvent.increment),
+            then: () => const <int>[2],
           ).then((_) => completer.complete()));
           await completer.future;
         }, (Object error, _) {
@@ -135,9 +135,9 @@ void main() {
         final completer = Completer<void>();
         await runZonedGuarded(() async {
           unawaited(testBloc<ErrorCounterBloc, int>(
-            build: () => ErrorCounterBloc(),
-            act: (bloc) => bloc.add(CounterEvent.increment),
-            expect: () => const <int>[1],
+            given: () => ErrorCounterBloc(),
+            when: (bloc) => bloc.add(CounterEvent.increment),
+            then: () => const <int>[1],
           ).then((_) => completer.complete()));
           await completer.future;
         }, (Object error, _) {
@@ -153,9 +153,9 @@ void main() {
         final completer = Completer<void>();
         await runZonedGuarded(() async {
           unawaited(testBloc<ErrorCounterBloc, int>(
-            build: () => ErrorCounterBloc(),
-            act: (_) => throw exception,
-            expect: () => const <int>[1],
+            given: () => ErrorCounterBloc(),
+            when: (_) => throw exception,
+            then: () => const <int>[1],
           ).then((_) => completer.complete()));
           await completer.future;
         }, (Object error, _) {
@@ -597,8 +597,8 @@ void main() {
         final completer = Completer<void>();
         await runZonedGuarded(() async {
           unawaited(testBloc<SideEffectCounterBloc, int>(
-            build: () => SideEffectCounterBloc(repository),
-            act: (bloc) => bloc.add(CounterEvent.increment),
+            given: () => SideEffectCounterBloc(repository),
+            when: (bloc) => bloc.add(CounterEvent.increment),
             verify: (_) {
               verify(() => repository.sideEffect()).called(2);
             },
@@ -621,9 +621,9 @@ Alternatively, consider using Matchers in the expect of the blocTest rather than
         final completer = Completer<void>();
         await runZonedGuarded(() async {
           unawaited(testBloc<ComplexBloc, ComplexState>(
-            build: () => ComplexBloc(),
-            act: (bloc) => bloc.add(ComplexEventA()),
-            expect: () => <ComplexState>[ComplexStateA()],
+            given: () => ComplexBloc(),
+            when: (bloc) => bloc.add(ComplexEventA()),
+            then: () => <ComplexState>[ComplexStateA()],
           ).then((_) => completer.complete()));
           await completer.future;
         }, (Object error, _) {

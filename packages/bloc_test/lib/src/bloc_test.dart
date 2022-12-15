@@ -155,12 +155,12 @@ void blocTest<B extends BlocBase<State>, State>(
     () async {
       await testBloc<B, State>(
         setUp: setUp,
-        build: build,
+        given: build,
         seed: seed,
-        act: act,
+        when: act,
         wait: wait,
         skip: skip,
-        expect: expect,
+        then: expect,
         verify: verify,
         errors: errors,
         tearDown: tearDown,
@@ -175,12 +175,12 @@ void blocTest<B extends BlocBase<State>, State>(
 @visibleForTesting
 Future<void> testBloc<B extends BlocBase<State>, State>({
   FutureOr<void> Function()? setUp,
-  required B Function() build,
+  required B Function() given,
   State Function()? seed,
-  Function(B bloc)? act,
+  Function(B bloc)? when,
   Duration? wait,
   int skip = 0,
-  dynamic Function()? expect,
+  dynamic Function()? then,
   Function(B bloc)? verify,
   dynamic Function()? errors,
   FutureOr<void> Function()? tearDown,
@@ -200,12 +200,12 @@ Future<void> testBloc<B extends BlocBase<State>, State>({
     () async {
       await setUp?.call();
       final states = <State>[];
-      final bloc = build();
+      final bloc = given();
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       if (seed != null) bloc.emit(seed());
       final subscription = bloc.stream.skip(skip).listen(states.add);
       try {
-        await act?.call(bloc);
+        await when?.call(bloc);
       } catch (error) {
         if (errors == null) rethrow;
         unhandledErrors.add(error);
@@ -213,8 +213,8 @@ Future<void> testBloc<B extends BlocBase<State>, State>({
       if (wait != null) await Future<void>.delayed(wait);
       await Future<void>.delayed(Duration.zero);
       await bloc.close();
-      if (expect != null) {
-        final dynamic expected = expect();
+      if (then != null) {
+        final dynamic expected = then();
         shallowEquality = '$states' == '$expected';
         try {
           test.expect(states, test.wrapMatcher(expected));
